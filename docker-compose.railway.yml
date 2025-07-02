@@ -1,0 +1,78 @@
+version: '3.8'
+
+# Railway 平台专用 Docker Compose 配置
+# 使用环境变量进行配置
+
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      POSTGRES_DB: ${POSTGRES_DB:-ai_agent_db}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-user} -d ${POSTGRES_DB:-ai_agent_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:6-alpine
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    image: lks0426/ai-agent-backend:latest
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-user}:${POSTGRES_PASSWORD:-password}@db:5432/${POSTGRES_DB:-ai_agent_db}
+      SECRET_KEY: ${SECRET_KEY}
+      ALGORITHM: ${ALGORITHM:-HS256}
+      ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES:-30}
+      PORT: 8000
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  ai_agent:
+    image: lks0426/ai-agent-ai-service:latest
+    environment:
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-user}:${POSTGRES_PASSWORD:-password}@db:5432/${POSTGRES_DB:-ai_agent_db}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      PORT: 8001
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  frontend:
+    image: lks0426/ai-agent-frontend:latest
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+
+  nginx:
+    image: lks0426/ai-agent-nginx:latest
+    ports:
+      - "${PORT:-80}:80"
+    environment:
+      PORT: ${PORT:-80}
+    depends_on:
+      - backend
+      - ai_agent
+      - frontend
+
+volumes:
+  postgres_data:
+  redis_data:
