@@ -124,7 +124,7 @@ function ChatPage({ currentUser }) {
       setMessages(prev => prev.map(m => m.id === tempUserMessageId ? { ...persistedUserMessage, id: persistedUserMessage.id || tempUserMessageId } : m));
 
       // 2. Call AI Agent service for streaming reply
-      await apiService.getAiReplyStream(
+      apiService.getAiReplyStream(
         currentUser.username, // or user.id
         currentConversationId,
         userMessageContent,

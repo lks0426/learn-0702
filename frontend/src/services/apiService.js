@@ -4,7 +4,7 @@ import axios from 'axios';
 // In development, React app runs on 3000, backend on 8000.
 // We'll use a proxy in package.json for local dev, or configure Nginx for production.
 // For direct calls from client (e.g. if not using proxy or if services are on different domains without Nginx)
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8000'; // Default for local
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || '/api/v1/backend'; // Use Nginx gateway
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,

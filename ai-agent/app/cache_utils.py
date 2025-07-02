@@ -19,13 +19,21 @@ def get_ai_redis_client():
     if ai_redis_client is None:
         try:
             logger.info(f"AI Agent: Attempting to connect to Redis at {REDIS_HOST}:{REDIS_PORT}")
-            client_params = {
-                "host": REDIS_HOST,
-                "port": REDIS_PORT,
-                "decode_responses": False # Important: Store as bytes to handle JSON manually for lists/dicts
-            }
+            # Create Redis client without AUTH for no-password setup
             if REDIS_PASSWORD:
-                client_params["password"] = REDIS_PASSWORD
+                client_params = {
+                    "host": REDIS_HOST,
+                    "port": REDIS_PORT,
+                    "decode_responses": False,
+                    "password": REDIS_PASSWORD
+                }
+            else:
+                client_params = {
+                    "host": REDIS_HOST,
+                    "port": REDIS_PORT,
+                    "decode_responses": False
+                    # No username/password for Redis without auth
+                }
 
             ai_redis_client = redis.Redis(**client_params) # type: ignore
             ai_redis_client.ping()

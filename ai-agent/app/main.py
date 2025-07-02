@@ -51,7 +51,7 @@ async def get_embedding(text: str, model: str = OPENAI_EMBEDDING_MODEL) -> List[
         raise HTTPException(status_code=500, detail="OpenAI API key not configured for embeddings.")
     try:
         text = text.replace("\n", " ")
-        response = await openai.embeddings.create(input=[text], model=model)
+        response = openai.embeddings.create(input=[text], model=model)
         return response.data[0].embedding
     except Exception as e:
         logger.error(f"Error getting embedding from OpenAI: {e}")
@@ -67,12 +67,12 @@ async def stream_openai_response(
 
     full_ai_reply_content = ""
     try:
-        stream = await openai.chat.completions.create(
+        stream = openai.chat.completions.create(
             model=model,
             messages=messages_for_openai, # type: ignore
             stream=True
         )
-        async for chunk in stream:
+        for chunk in stream:
             content_delta = chunk.choices[0].delta.content
             if content_delta:
                 full_ai_reply_content += content_delta

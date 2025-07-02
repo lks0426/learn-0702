@@ -18,15 +18,24 @@ def get_redis_client():
     if redis_client is None:
         try:
             logger.info(f"Attempting to connect to Redis at {REDIS_HOST}:{REDIS_PORT}")
-            client_params = {
-                "host": REDIS_HOST,
-                "port": REDIS_PORT,
-                "decode_responses": True # Decode responses from bytes to string automatically
-            }
+            # Create Redis client without AUTH for no-password setup
             if REDIS_PASSWORD:
-                client_params["password"] = REDIS_PASSWORD
+                client_params = {
+                    "host": REDIS_HOST,
+                    "port": REDIS_PORT,
+                    "decode_responses": True,
+                    "password": REDIS_PASSWORD
+                }
+            else:
+                client_params = {
+                    "host": REDIS_HOST,
+                    "port": REDIS_PORT,
+                    "decode_responses": True
+                    # No username/password for Redis without auth
+                }
 
             redis_client = redis.Redis(**client_params) # type: ignore
+            # Test connection without AUTH if no password is set
             redis_client.ping() # Check connection
             logger.info("Successfully connected to Redis.")
         except redis.exceptions.ConnectionError as e:
