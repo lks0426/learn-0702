@@ -1,15 +1,9 @@
-# Railway 部署 - 静态前端
-FROM nginx:1.25-alpine
+# Railway 后端部署
+FROM lks0426/ai-agent-backend:latest
 
-# 复制前端静态文件
-COPY --from=lks0426/ai-agent-frontend:latest /usr/share/nginx/html /usr/share/nginx/html
+# Railway 端口配置
+ENV PORT=8000
+EXPOSE 8000
 
-# 复制 Nginx 配置文件
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-
-# Railway 需要的端口设置
-ENV PORT=80
-EXPOSE 80
-
-# 启动 Nginx
-CMD ["nginx", "-g", "daemon off;"]
+# 启动命令
+CMD ["gunicorn", "app.main:app", "-w", "4", "-k", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:8000"]
