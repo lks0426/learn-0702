@@ -1,9 +1,9 @@
 # Railway 后端部署
 FROM lks0426/ai-agent-backend:latest
 
-# 切换到 root 用户安装 gunicorn
+# 切换到 root 用户安装依赖
 USER root
-RUN pip install gunicorn
+RUN pip install gunicorn uvicorn[standard]
 
 # 切换回原用户
 USER appuser
