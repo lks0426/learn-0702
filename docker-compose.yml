@@ -78,9 +78,9 @@ services:
     #   - "8001:8001"
     environment:
       OPENAI_API_KEY: ${OPENAI_API_KEY} # Loaded from root .env
-      PINECONE_API_KEY: ${PINECONE_API_KEY} # Loaded from root .env
-      PINECONE_ENVIRONMENT: ${PINECONE_ENVIRONMENT} # Loaded from root .env
-      PINECONE_INDEX_NAME: ${PINECONE_INDEX_NAME:-ai-agent-index} # Loaded from root .env
+      # PINECONE_API_KEY: ${PINECONE_API_KEY} # Loaded from root .env
+      # PINECONE_ENVIRONMENT: ${PINECONE_ENVIRONMENT} # Loaded from root .env
+      # PINECONE_INDEX_NAME: ${PINECONE_INDEX_NAME:-ai-agent-index} # Loaded from root .env
       # AI_AGENT_HOST: ${AI_AGENT_HOST:-0.0.0.0} # Not needed as uvicorn command specifies host
       # AI_AGENT_PORT: ${AI_AGENT_PORT:-8001} # Not needed as uvicorn command specifies port
     depends_on:
@@ -94,7 +94,7 @@ services:
     # That Dockerfile will be referenced in docker-compose.prod.yml.
     image: node:18-alpine # Use a Node image for react-scripts
     container_name: ai_agent_frontend_dev
-    command: npm start
+    command: sh -c "npm install && npm start"
     working_dir: /app/frontend
     volumes:
       - ./frontend:/app/frontend # Mount the frontend code
@@ -114,8 +114,8 @@ services:
       # For this setup, apiService.js defaults to http://localhost:8000, which should work
       # as backend is exposed on 8000 from its container.
       # These URLs are now relative to the main Nginx gateway
-      REACT_APP_API_BASE_URL=/api/v1/backend
-      REACT_APP_AI_AGENT_API_BASE_URL=/api/v1/agent
+      # REACT_APP_API_BASE_URL=/api/v1/backend
+      # REACT_APP_AI_AGENT_API_BASE_URL=/api/v1/agent
     depends_on:
       - backend # Nginx gateway depends on these, but frontend itself doesn't directly connect anymore
       - ai_agent  # Frontend calls go to Nginx gateway
@@ -137,7 +137,7 @@ services:
       - frontend
     volumes:
       # Mount the development Nginx config to override the production one copied by Dockerfile
-      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./nginx/nginx-dev.conf:/etc/nginx/conf.d/default.conf:ro
       # Mount SSL certs if used for dev (e.g. self-signed):
       # - ./nginx/ssl-dev/:/etc/nginx/ssl:ro
       - nginx_logs:/var/log/nginx # Persistent logs

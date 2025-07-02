@@ -1,4 +1,5 @@
 import os
+from typing import Optional, List
 from sqlalchemy import create_engine, text, Column, Integer, Index, func, Text, DateTime, String
 from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy.ext.declarative import declarative_base
@@ -92,8 +93,8 @@ def store_message_embedding(
     session_id: str,
     sender: str,
     content: str,
-    embedding: list[float],
-    content_hash: str | None = None
+    embedding: List[float],
+    content_hash: Optional[str] = None
 ):
     db_embedding = MessageEmbedding(
         session_id=session_id,
@@ -108,7 +109,7 @@ def store_message_embedding(
     logger.info(f"Stored embedding for session {session_id}, sender {sender}")
     return db_embedding
 
-def find_similar_message_contents(db: Session, session_id: str, query_embedding: list[float], top_k: int = 3, similarity_threshold: float = 0.75) -> list[str]:
+def find_similar_message_contents(db: Session, session_id: str, query_embedding: List[float], top_k: int = 3, similarity_threshold: float = 0.75) -> List[str]:
     """
     Finds messages with embeddings similar to the query_embedding within the same session.
     Returns a list of their content previews.

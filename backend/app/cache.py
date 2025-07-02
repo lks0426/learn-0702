@@ -2,6 +2,7 @@ import redis # type: ignore
 import os
 import logging
 import json # For serializing/deserializing complex data if needed
+from typing import Optional, Any
 
 logger = logging.getLogger(__name__)
 
@@ -37,7 +38,7 @@ def get_redis_client():
     return redis_client
 
 # Example cache functions (can be expanded)
-def set_cache(key: str, value: any, ttl_seconds: int = 3600):
+def set_cache(key: str, value: Any, ttl_seconds: int = 3600):
     """
     Set a value in cache. Value will be JSON serialized if it's a dict or list.
     """
@@ -53,7 +54,7 @@ def set_cache(key: str, value: any, ttl_seconds: int = 3600):
         except Exception as e:
             logger.error(f"Failed to set cache for key '{key}': {e}")
 
-def get_cache(key: str) -> any | None:
+def get_cache(key: str) -> Optional[Any]:
     """
     Get a value from cache. Attempts to JSON deserialize if value looks like JSON.
     """

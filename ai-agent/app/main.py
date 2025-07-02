@@ -46,7 +46,7 @@ class ChatResponseChunk(BaseModel): # For documenting the structure of streamed 
 def get_md5_hash(text: str) -> str:
     return hashlib.md5(text.encode('utf-8')).hexdigest()
 
-async def get_embedding(text: str, model: str = OPENAI_EMBEDDING_MODEL) -> list[float]:
+async def get_embedding(text: str, model: str = OPENAI_EMBEDDING_MODEL) -> List[float]:
     if not OPENAI_API_KEY:
         raise HTTPException(status_code=500, detail="OpenAI API key not configured for embeddings.")
     try:
@@ -60,7 +60,7 @@ async def get_embedding(text: str, model: str = OPENAI_EMBEDDING_MODEL) -> list[
 # --- Streaming Chat Logic ---
 async def stream_openai_response(
     model: str,
-    messages_for_openai: list,
+    messages_for_openai: List[dict],
     session_id: str, # For potential use in chunk metadata
     db: Session # For storing full AI reply embedding at the end
 ) -> AsyncGenerator[str, None]:
