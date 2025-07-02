@@ -1,0 +1,7 @@
+This directory will contain AWS deployment scripts and configuration files, such as:
+- CloudFormation templates (optional)
+- Terraform scripts (optional)
+- Shell scripts for deployment automation
+- IAM policy examples
+- EC2 user data scripts
+- etc.

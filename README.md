@@ -1,158 +1,117 @@
+# AI Agent Project
 
-技术架构
-服务组件
+This project is a comprehensive, full-stack AI Agent application designed as a learning tool to master modern AI Agent development and deployment practices.
 
-前端服务: React.js单页应用，简洁的聊天界面
-后端API: Python/FastAPI，RESTful API设计
-AI Agent服务: Python + OpenAI API，处理智能对话
-向量数据库: Pinecone云服务，AI语义搜索
-关系数据库: PostgreSQL，存储用户和对话历史
-缓存层: Redis，会话管理和性能优化
-网关代理: Nginx，反向代理和静态文件服务
+## Overview
 
-AWS服务架构
+The project includes:
+- A React.js frontend for user interaction.
+- A Python/FastAPI backend API.
+- A Python-based AI Agent service utilizing OpenAI and pgvector for semantic search.
+- PostgreSQL for relational data storage and vector embeddings.
+- Redis for caching and short-term chat session memory.
+- Nginx as a reverse proxy gateway.
+- Docker for containerization (local development and production).
+- Deployment scripts and documentation for AWS.
 
-EC2: t3.medium实例，运行Docker容器
-RDS PostgreSQL: db.t3.micro，托管数据库
-ElastiCache Redis: cache.t3.micro，托管缓存
-Application Load Balancer: 健康检查和负载均衡
-ECR: Docker镜像仓库
-VPC + Security Groups: 网络安全配置
-Route53 + Certificate Manager: 域名和SSL（可选）
+## Project Structure
 
-项目结构要求
+```
 ai-agent-project/
-├── frontend/                 # React前端
-├── backend/                  # FastAPI后端
-├── ai-agent/                 # AI Agent服务
-├── nginx/                    # Nginx配置
-├── docker-compose.yml        # 本地开发环境
-├── docker-compose.prod.yml   # 生产环境配置
-├── aws/                      # AWS部署脚本和配置
-├── docs/                     # 项目文档
-├── .env.example              # 环境变量模板
-└── README.md                 # 项目说明
-功能需求
-AI Agent核心功能
+├── frontend/                 # React frontend
+├── backend/                  # FastAPI backend
+├── ai-agent/                 # AI Agent service
+├── nginx/                    # Nginx configuration (gateway and prod frontend)
+├── aws/                      # AWS deployment scripts and configuration
+├── docs/                     # Project documentation (architecture, detailed guides)
+├── .env.example              # Environment variables template
+├── docker-compose.yml        # Local development environment
+├── docker-compose.prod.yml   # Production environment configuration
+└── README.md                 # This file
+```
 
-智能对话: 基于OpenAI GPT模型的对话功能
-语义搜索: 使用Pinecone进行向量搜索
-记忆管理: 短期记忆(Redis)和长期记忆(PostgreSQL)
-多轮对话: 支持上下文连续对话
+## Core Features
+- **Intelligent Chat**: AI-powered conversations using OpenAI models.
+- **Semantic Search**: pgvector integration for finding relevant information from past conversations (RAG).
+- **Memory Management**: Short-term context in Redis, long-term storage in PostgreSQL.
+- **User Authentication**: JWT-based authentication for users.
+- **Streaming Responses**: Real-time message streaming from AI to the frontend.
+- **Containerized Deployment**: Fully containerized using Docker for consistent environments.
 
-Web界面功能
+## Technology Stack
 
-聊天界面: 类似ChatGPT的简洁界面
-历史记录: 查看对话历史
-用户管理: 简单的用户注册登录
+### Service Components
+- **Frontend**: React.js (with React Router, Axios)
+- **Backend API**: Python, FastAPI, SQLAlchemy
+- **AI Agent Service**: Python, FastAPI, OpenAI API, pgvector
+- **Relational & Vector Database**: PostgreSQL with pgvector extension
+- **Cache**: Redis
+- **Gateway Proxy**: Nginx
 
-代码实现要求
-后端API (FastAPI)
+### AWS Deployment (Example)
+- **Compute**: EC2 (for Docker containers)
+- **Database**: RDS for PostgreSQL
+- **Cache**: ElastiCache for Redis
+- **Container Registry**: ECR
+- **Networking**: VPC, ALB, Route 53, Security Groups
+- **SSL**: AWS Certificate Manager (ACM)
 
-用户认证 (JWT)
-对话管理接口
-历史记录接口
-健康检查接口
-异步处理
-错误处理和日志
+## Getting Started
 
-AI Agent服务
+### Prerequisites
+- Docker and Docker Compose
+- Node.js and npm (for local frontend development/dependency management)
+- Python (for local backend/AI agent development if not using Docker exclusively)
+- Git
 
-OpenAI API集成
-Pinecone向量数据库集成
-对话上下文管理
-流式响应支持
-错误重试机制
+### Local Development Setup
+1.  **Clone the repository:**
+    ```bash
+    git clone <repository-url>
+    cd ai-agent-project
+    ```
+2.  **Environment Variables:**
+    *   Copy `.env.example` to `.env` in the project root: `cp .env.example .env`
+    *   Fill in the required values in `.env`, especially:
+        *   `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB`
+        *   `SECRET_KEY` (generate a strong random string)
+        *   `OPENAI_API_KEY`
+        *   Other variables as needed (defaults are generally fine for local dev).
+3.  **Build and Run with Docker Compose:**
+    ```bash
+    docker compose up --build -d
+    ```
+    *   This will build all service images and start the containers.
+    *   The `-d` flag runs them in detached mode.
+    *   Services:
+        *   Frontend (React Dev Server): `http://localhost:3000` (proxied by Nginx Gateway to `http://localhost/`)
+        *   Nginx Gateway: `http://localhost/` (or `http://localhost:80/`)
+        *   Backend API: Accessible via Nginx gateway at `http://localhost/api/v1/backend/`
+        *   AI Agent Service: Accessible via Nginx gateway at `http://localhost/api/v1/agent/`
+        *   PostgreSQL: Port `5432` (exposed for direct access if needed, but services use Docker network)
+        *   Redis: Port `6379` (exposed for direct access if needed)
+4.  **Install Frontend Dependencies (Optional, for IDE integration/local scripts):**
+    If your IDE needs local `node_modules` or you want to run `npm` scripts directly in `frontend/`:
+    ```bash
+    cd frontend
+    npm install
+    cd ..
+    ```
+5.  **Accessing the Application:**
+    Open your browser and navigate to `http://localhost/`. (The Nginx gateway listens on port 80).
 
-前端应用 (React)
+### Stopping Local Development
+```bash
+docker compose down -v # -v removes named volumes (like DB data)
+```
 
-响应式聊天界面
-实时消息显示
-用户认证界面
-历史对话展示
-WebSocket连接
+## Production Deployment
 
-数据库设计
+For deploying this project to AWS, please refer to the detailed guide:
+[AWS Deployment Guide](./aws/README.md)
 
-用户表 (users)
-对话表 (conversations)
-消息表 (messages)
-简单的表关系设计
+This guide covers setting up the necessary AWS infrastructure (VPC, EC2, RDS, ElastiCache, ECR, ALB, Route53) and deploying the application using the `docker-compose.prod.yml` configuration.
 
-Docker配置要求
-本地开发环境
-
-热重载支持
-开发工具集成
-快速启动命令
-
-生产环境
-
-多阶段构建优化
-安全配置
-资源限制
-健康检查
-
-AWS部署要求
-基础设施配置
-
-VPC和子网配置
-Security Groups安全规则
-RDS和ElastiCache配置
-EC2实例配置
-
-部署脚本
-
-自动化部署脚本
-环境变量管理
-SSL证书配置
-域名解析设置
-
-监控和日志
-
-基本的健康监控
-应用日志收集
-错误报警配置
-
-文档要求
-README.md 包含
-
-项目介绍和架构图
-快速开始指南
-本地开发环境搭建
-AWS部署步骤
-环境变量说明
-常见问题解答
-
-部署文档
-
-AWS资源创建步骤
-域名和SSL配置
-监控设置
-备份和恢复策略
-
-安全要求
-
-API密钥安全管理
-数据库连接加密
-HTTPS强制重定向
-CORS跨域配置
-输入验证和过滤
-
-成本控制
-
-使用AWS免费层资源
-合理的实例规格选择
-资源自动停止脚本
-成本监控告警
-
-输出要求
-请提供：
-
-完整的项目代码文件
-详细的README文档
-步骤清晰的部署指南
-环境配置文件
-简单的架构图说明
-
-确保每个文件都有清晰的注释，让初学者能够快速理解项目结构和实现逻辑。
+## Further Documentation
+- Detailed architecture diagrams and component descriptions can be found in the `docs/` directory (to be added).
+- Specific service configurations and API documentation will also be added to `docs/`.

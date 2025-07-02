@@ -1,0 +1,35 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "ecr:GetAuthorizationToken",
+                "ecr:BatchCheckLayerAvailability",
+                "ecr:GetDownloadUrlForLayer",
+                "ecr:BatchGetImage"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents",
+                "logs:DescribeLogStreams"
+            ],
+            "Resource": "arn:aws:logs:*:*:log-group:/ecs/ai-agent-project:*"
+        }
+    ]
+}
+// Note on using this policy:
+// 1. In the "Resource" for logs, replace '*' for region and account ID if you want to be more specific,
+//    or ensure your log group name pattern matches. The log group name `/ecs/ai-agent-project` is an example.
+// 2. This policy grants ECR read access to all repositories within the account.
+//    For stricter security, you can specify ARNs of individual ECR repositories.
+// 3. This JSON policy should be attached to an IAM Role. That IAM Role is then associated
+//    with the EC2 instance as an instance profile.
+// 4. If your application or deployment scripts need access to other AWS services
+//    (e.g., S3 for fetching configuration files, AWS Secrets Manager for secrets),
+//    you'll need to add corresponding permissions to this policy.

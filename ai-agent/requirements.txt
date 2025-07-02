@@ -1,0 +1,12 @@
+fastapi
+uvicorn[standard]
+pydantic
+openai>=1.0.0 # Specify a version that supports chat completions create method
+python-dotenv
+sqlalchemy
+psycopg2-binary # For PostgreSQL connection
+pgvector # For vector similarity search in PostgreSQL
+# sentence-transformers # For generating embeddings, if not using OpenAI embeddings (OpenAI is used here)
+numpy # Often a dependency for vector operations or embedding libraries
+tiktoken # For counting tokens, useful for managing context length for OpenAI
+redis # For Redis cache integration (e.g., for short-term chat history)

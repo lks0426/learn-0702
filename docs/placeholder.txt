@@ -1,0 +1,7 @@
+This directory will contain detailed project documentation, including:
+- AWS deployment steps
+- Architecture diagrams
+- Advanced configuration guides
+- Backup and recovery procedures
+- Monitoring and logging setup
+- etc.

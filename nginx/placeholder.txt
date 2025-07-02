@@ -1,0 +1,4 @@
+This directory will contain Nginx configuration files, including:
+- default.conf for reverse proxy and static file serving
+- SSL configuration snippets (if managing SSL directly on Nginx)
+- Dockerfile for custom Nginx image (if needed)
