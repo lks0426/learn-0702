@@ -1,6 +1,9 @@
 # Railway AI Agent 部署
 FROM lks0426/ai-agent-ai-service:latest
 
+# 安装 gunicorn
+RUN pip install gunicorn
+
 # Railway 端口配置
 ENV PORT=8001
 EXPOSE 8001
