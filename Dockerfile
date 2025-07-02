@@ -1,9 +1,9 @@
-# Railway 后端部署
-FROM lks0426/ai-agent-backend:latest
+# Railway AI Agent 部署
+FROM lks0426/ai-agent-ai-service:latest
 
 # Railway 端口配置
-ENV PORT=8000
-EXPOSE 8000
+ENV PORT=8001
+EXPOSE 8001
 
 # 启动命令
-CMD ["gunicorn", "app.main:app", "-w", "4", "-k", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:8000"]
+CMD ["gunicorn", "app.main:app", "-w", "2", "-k", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:8001"]
