@@ -1,12 +1,14 @@
 # Railway AI Agent 部署
-FROM lks0426/ai-agent-ai-service:latest
+FROM python:3.9-slim
 
-# 切换到 root 用户安装依赖
-USER root
-RUN pip install gunicorn uvicorn[standard]
+# 设置工作目录
+WORKDIR /app
 
-# 切换回原用户
-USER appuser
+# 复制应用代码
+COPY --from=lks0426/ai-agent-ai-service:latest /app /app
+
+# 安装依赖
+RUN pip install fastapi uvicorn[standard] openai pinecone-client
 
 # Railway 端口配置
 ENV PORT=8001
